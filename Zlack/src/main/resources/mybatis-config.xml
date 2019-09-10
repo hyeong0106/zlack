@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <settings>
+  	<setting name="jdbcTypeForNull" value="NULL"/>
+  	<!-- 파라미터전달된 데이터가 null인 경우, db에서도 null로 인식할 것 -->
+  	<setting name="mapUnderscoreToCamelCase" value="true"/>
+  	<!-- 컬럼명에 _를 사용한 경우, javainsertDev코드에서는 camelCasing으로 치환할 것 -->
+  </settings>
+  
+  <typeAliases>
+  	<typeAlias type="kh.finalpj.zlack.analysis.model.vo.UseChannelAnalysis" alias="UseChannelAnalysis"/>
+  	<typeAlias type="kh.finalpj.zlack.analysis.model.vo.UserChannel" alias="UserChannel"/>
+  	<typeAlias type="kh.finalpj.zlack.member.model.vo.Member" alias="Member"/>
+  	<typeAlias type="kh.finalpj.zlack.member.model.vo.AuthCode" alias="AuthCode"/>
+  	<typeAlias type="kh.finalpj.zlack.worksapce.model.vo.ChatRoom" alias="ChatRoom"/>
+
+  </typeAliases>
+
+<typeHandlers>
+       <typeHandler handler="kh.finalpj.zlack.common.MyLongTypeHandler" jdbcType="LONGVARCHAR" javaType="java.lang.String"/>
+</typeHandlers>
+  
+</configuration>

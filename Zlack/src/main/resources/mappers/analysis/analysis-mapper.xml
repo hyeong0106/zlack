@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="analysis">
+	<select id="selectUseChannelAnalysis" resultType="UseChannelAnalysis">
+		select * from USE_CHANNEL_ANALYSIS where member_id = #{memberId}
+	</select>
+	<select id="selectChannelName" resultType="String">
+		select channel_name from member_channel where member_id = #{memberId}
+	</select>
+	<select id="selectAllMemberJoin" resultType="Member">
+		select * from memberJoin
+	</select>
+	<select id="selectAllMemberLeave" resultType="Member">
+		select * from memberLeave
+	</select>
+</mapper>

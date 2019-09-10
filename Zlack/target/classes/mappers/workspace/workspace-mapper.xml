@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="workspace">
+	<select id="SelectDMMemberList" resultType="map">
+		select * 
+		from member 
+		where memberid not in (select memberid 
+							   from UserAndChatRoom 
+							   where chatroomno in (select chatroomno 
+							   						from UserAndChatRoom
+							   						where memberId= #{memberId}) and memberId!= #{memberId})
+	</select>
+	<select id="selectChatRoomList" resultType="ChatRoom">
+		select *
+        from UserAndChatRoom
+        where chatRoomno in (select chatRoomno
+                              from UserAndChatRoom
+                              where memberId = #{memberId})
+        and memberId != #{memberId} and ChatType !='CH'
+	</select>
+	<select id="selectOneChannelName" resultType="string">
+		select CHANNELNAME
+		from CHANNEL
+		where CHATROOMNO = #{chatroom}
+	</select>
+	<select id="SelectMemberList" resultType="map">
+			select * from member 
+	</select>
+	<select id="selectchatlog" resultType="map">
+		select rownum, A.* from(select * from chattest where chatroomno = #{chatroom} order by chatno desc)A where rownum between 1 and 20 order by chatno asc
+	</select> 
+  	<select id="selectPagedchatlog" resultType="map">
+  		select * from chattest where chatroomno = #{chatroom} order by chatno desc
+  	</select> 
+
+	<insert id="InsertDMMemberList2">
+        insert into UserAndChatRoom values(SEQ_CHATROOM.CURRVAL,#{plusMember},0,'DM')
+    </insert>
+    <insert id="InsertDMMemberList">
+        insert into UserAndChatRoom values(SEQ_CHATROOM.NEXTVAL,#{memberId},0,'DM')
+    </insert>
+    
+	<insert id="insertmemberJointabel" >
+		insert into memberJointabel values(#{chatroomno},#{memberId})
+	</insert>
+	
+	<delete id="deletememberJointabel">
+		delete from memberjointabel where memberid = #{memberId}
+	</delete>
+	
+	<update id="SeeMessage">
+		update UserAndChatRoom set noread = 0
+		where chatroomno=#{chatroomno} and memberid != #{memberId}
+	</update>
+	<select id="selectById" resultType="map">
+		select memberid 
+		from(
+		select '@'||memberid as memberid
+		from member)
+		where memberid like #{message}||'%'
+	</select>
+	
+	<insert id="insertChatTest" >
+		insert into CHATTEST values(#{chatRoomNo},#{memberId},#{content},SEQ_CHAT_NO.NEXTVAL)
+	</insert>
+	<insert id="insertMemo" >
+		insert into memo values(SEQ_MEMO_NO.NEXTVAL,#{memberId},#{memoTitle},#{memoContent})
+	</insert>
+	<select id="selectAllMemoList" resultType="map">
+			select * from memo where memberid = 'admin' order by memono
+	</select>
+	<select id="selectMemoList" resultType="map">
+			select * from memo where memberid = #{memberId} order by memono
+	</select>
+	<delete id="deleteMemo">
+			delete from memo where memono = #{memoNo}
+	</delete>
+	<update id="updateMemo">
+		update memo set memotitle=#{memoTitle}, memocontent=#{memoContent}
+		where memono=#{memoNo} 
+	</update>
+	<update id="checkSee">
+		UPDATE UserAndChatRoom set noread = noread+1 
+		WHERE MEMBERID not in(select MEMBERID from memberJointabel where chatroomno=#{chatroom}) and chatroomno = #{chatroom} 
+	</update>
+	<select id="searchMember" resultType="string">
+		select memberid 
+		from(
+		select '@'||memberid as memberid
+		from member)
+		where memberid = #{content}
+	</select>
+	<insert id="InsertwrokSpcaeName">
+		insert into workspace values(SEQ_WORKSPACE_NO.nextval,'admin',0,'test',0,#{wrokSpcaeName})
+	</insert>
+	
+	<select id="selectChannelList" resultType="map">
+		select * from channel where chatroomno in (select chatroomno from userandchatroom where memberid = #{memberId})
+	</select>
+	<select id="selectChannelListJoinAble" resultType="map">
+		select * from channel where chatroomno not in (select chatroomno from userandchatroom where memberid = #{memberId})
+	</select>
+	<select id="selectAllChannel" resultType="map">
+		select * from channel
+	</select>
+	
+	<insert id="JoinChannel">
+        insert into userandchatroom values(#{ChatroomNo},#{memberId},0,'CH')
+    </insert>
+	
+	<select id="ExistNumber" resultType="string">
+		select chatroomno from channel where ChannelName = #{channelName}
+	</select>
+	
+	<insert id="JointoChannel">
+		insert into USERANDCHANNEL values(#{ChatroomNo},#{memberId},0,#{ChannelName})
+	</insert>
+	
+	<insert id="createChannel">
+		insert into channel values(seq_chatroom.nextval,#{channelName})
+	</insert>
+	
+	<select id="selectCno" resultType="_int">
+		select chatroomno from channel where channelname= #{channelName}
+	</select>
+	<insert id="insertFileChat">
+        insert into
+        chattest values(#{chatroom},
+              #{memberId},
+              #{content},seq_chat_no.nextval)
+    </insert>
+    <insert id="insertAttachment">
+        insert into attachment(attachmentno, chatRoomNo, originalfilename, renamedfilename)
+        values(seq_attachmentno.nextval,
+               #{chatRoomNo},
+               #{originalFileName},
+               #{renamedFileName})
+    </insert>
+	 <delete id="deleteMessage">delete from chattest where chatno = #{chatNo}</delete> 
+	<update id="updateUseChannelAnalysis">
+		update use_channel_analysis set amount_chatting = amount_chatting+1 where analysis_month = '7월' and channel_name = 'KH M반'
+	</update>
+</mapper>

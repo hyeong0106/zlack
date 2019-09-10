@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="member">	
+	<select id="loginCheck" resultType="Member">
+		select * from member where MEMBERID=#{memberId} AND PASSWORD=#{password}
+	</select>
+	<select id="viewMember" resultType="Member">
+        select * from member where MEMBERID=#{memberId} AND PASSWORD=#{password}
+    </select>
+    <update id="loginCount" parameterType="String">
+    	UPDATE member SET loginCount=loginCount+1 where memberId=#{memberId}
+    </update>
+	<select id="selectOneMemberId" resultType="Member">
+		select * from member where memberid = #{memberId}
+	</select>
+	<select id="selectOneMember" resultType="Member">
+		select * from member where memberid = #{memberId}
+	</select>
+	<select id="selectworkSpace" resultType="map">
+		select teamname from workspace
+	</select>
+	
+	
+	<insert id="insertMember">
+		insert into member 
+		values(#{memberId},#{email},#{password},#{nickName},#{image},default,default,0)
+	</insert>
+	<select id="IdCheckEmail" resultMap="membercheck">
+		select * from member where email = #{email}
+	</select>
+	<resultMap type="map" id="membercheck">
+		<result column="memberid" property="memberId"/>
+	</resultMap>
+	<delete id="DeleteCode">
+		delete from authcode where senddate <![CDATA[<]]> #{today} or email = #{email}
+	</delete>
+	<insert id="insertAuthCode">
+		insert into authcode values(#{email},#{authCode},default) 
+	</insert>
+	<select id="selectCheckCode" resultType="AuthCode">
+		select * from authcode where code = #{authCode} and email = #{email}
+	</select>
+	<select id="PwdCheckEmail" resultMap="PwdCheck">
+		select * from member where memberid = #{memberId} and email = #{email}
+	</select>
+	<resultMap type="map" id="PwdCheck"></resultMap>
+	
+	<update id="updatePassword">
+		update member set password = #{password} where memberid = #{memberId}
+	</update>
+	
+	<!-- 회원정보 수정부분 -->
+	<update id="updateViewAll">
+		update member set nickname = #{nickName}, email = #{email}, password = #{password}, image = #{proFile} where memberid = #{memberId}
+	</update>
+	
+	<update id="updateViewPassword">
+		update member set nickname = #{nickName}, email = #{email}, password = #{password} where memberid = #{memberId}
+	</update>
+	
+	<update id="updateViewProFile">
+		update member set nickname = #{nickName}, email = #{email}, image = #{proFile} where memberid = #{memberId}
+	</update>
+	
+	<update id="updateView">
+		update member set nickname = #{nickName}, email = #{email} where memberid = #{memberId}
+	</update>
+	
+	<select id="memberPwdcheck" resultType="Member">
+		select * from member where memberid = #{memberId} and password = #{password}
+	</select>
+	
+	<delete id="memberDelete">
+		delete from member where memberid = #{memberId}
+	</delete>
+	<select id="findMember" resultType="map">
+		select * from member where memberid like '%'||#{content}||'%'
+	</select>
+</mapper>
